@@ -9,7 +9,10 @@ Toto je ukázka implementace "Elektronické evidence tržeb" s použitím XML zp
 a `groovy-wslite` https://github.com/jwagenleitner/groovy-wslite. Byla otestována oproti testovacímu prostředí EET.
 Díky své jednoduchosti může být použitelná např. pro sporadický prodej.
 
-Stránky projektu: https://gitlab.com/novakmi/eetlite
+Stránky projektu:  
+ 
+https://github.com/novakmi/eetlite  
+https://gitlab.com/novakmi/eetlite
 
 ## Licence
 
@@ -88,7 +91,11 @@ lze měnit úroveň logování na konzoli
 
 ## Kontakt
 
-K hlášení chyb, podávání podnětů na zlepšení lze použít:  https://gitlab.com/novakmi/eetlite/issues  
+K hlášení chyb, podávání podnětů na zlepšení lze použít:  
+
+https://github.com/novakmi/eetlite/issues  
+https://gitlab.com/novakmi/eetlite/issues
+  
 e-mail: it.novakmi@gmail.com
 
 ## Podobné projekty a odkazy
