@@ -50,23 +50,23 @@ Aplikace je k dispozici  ve formě zdrojových skriptů. Ty je třeba rozbalit d
 
 Aplikaci lze používat z příkazové řádky.
 
-* Nejprve se přesvědčte, že máte správně neinstalovanou podporu groovy (příkaz `groovy --version`)
+* Nejprve se přesvědčte, že máte správně neinstalovanou podporu groovy (příkaz `groovy --version`):
 
-       $ groovy --version
-       Groovy Version: 2.4.0 JVM: 1.8.0_101 Vendor: Oracle Corporation OS: Linux
-
+`$ groovy --version`  
+`Groovy Version: 2.4.0 JVM: 1.8.0_101 Vendor: Oracle Corporation OS: Linux`
+           
 * Upravte parametry tržby a případné konfigurace (cestu na soubor s klíčem, heslo) v souboru `eetlite_run.groovy`.
 * Spusťte aplikaci přikazem `groovy eetlite_run.groovy` (Windows, Linux, Mac) popřípadě 
   příkazem `./eetlite_run.groovy` (Linux). Aplikaci je třeba spustit z adresáře, ve kterém jsou všechny její soubory.
   Při úplně prvním spuštění je třeba vyčkat, než Groovy stáhne potřebné 'dependence' (většinou do adresáře 
   `.groovy` v domovském adresáři).
-* Po úspěšném zpracování se zobrazí hodnota 'FIK' dané tržby.
+* Po úspěšném zpracování se zobrazí hodnota 'FIK' dané tržby:
    
-       $ groovy eetlite_run.groovy
-       23:50:23.100 [main] INFO  EetRunner - ==> run
-       23:50:23.195 [main] INFO  EetRunner - eetlite ver 0.0.1
-       FIK: 377e3c98-3528-449e-b71c-01726be0f8a9-ff
-       23:50:24.025 [main] INFO  EetRunner - <== run fik 377e3c98-3528-449e-b71c-01726be0f8a9-ff
+`$ groovy eetlite_run.groovy`         
+`23:50:23.100 [main] INFO  EetRunner - ==> run`  
+`23:50:23.195 [main] INFO  EetRunner - eetlite ver 0.0.1`  
+`FIK: 377e3c98-3528-449e-b71c-01726be0f8a9-ff`  
+`23:50:24.025 [main] INFO  EetRunner - <== run fik 377e3c98-3528-449e-b71c-01726be0f8a9-ff`  
    
 ## Použité knihovny a nástroje
 
@@ -82,7 +82,7 @@ Aplikaci lze používat z příkazové řádky.
 
 Změnou následujícího řádku v souboru `logback.groovy`:
 
-    root(INFO, ["STDOUT"])   // change log level here to TRACE, DEBUG, INFO, WARN
+`root(INFO, ["STDOUT"])   // change log level here to TRACE, DEBUG, INFO, WARN`
     
 lze měnit úroveň logování na konzoli 
 
