@@ -23,6 +23,10 @@ Viz soubor `LICENSE`
 
 ## Changelog
 
+* 2016-08-31 version `0.0.2`
+  * přidána podpora volitelných parametrů
+  * přidán popis parametrů pro editaci v souboru `./eetlite_run.groovy`  
+
 * 2016-08-16 version `0.0.1`  
    * první verze
    * vytvoření a podepsání EET zprávy
@@ -32,9 +36,8 @@ Viz soubor `LICENSE`
 
 ## Další vývoj (TODO)
 
-* přidat volitelné parametry 'tržby'
-* kontrola správnosti parametrů 'tržby'
-* kontrola správnosti konfigurace
+* kontrola správnosti parametrů 'tržby' a konfigurace
+* validace XML zprávy oproti XML schématu
 * podpora pro hash (zakódování) hesla v konfiguračním souboru
 * zpracování chybové odpovědi
 * kontrola podpisu odpovědi
@@ -42,7 +45,8 @@ Viz soubor `LICENSE`
 ### Výhled
 
 * zabalení a publikování jako knihovnu (jar) v Maven repository (např. na https://bintray.com/)
-* jednoduchá grafická nástavba
+* jednoduchá okenní nástavba
+* jednoduchá aplikace pokladna pro PC s možností PDF účtenky
 
 ## Instalace
 
@@ -63,13 +67,21 @@ Aplikaci lze používat z příkazové řádky.
   příkazem `./eetlite_run.groovy` (Linux). Aplikaci je třeba spustit z adresáře, ve kterém jsou všechny její soubory.
   Při úplně prvním spuštění je třeba vyčkat, než Groovy stáhne potřebné 'dependence' (většinou do adresáře 
   `.groovy` v domovském adresáři).
-* Po úspěšném zpracování se zobrazí hodnota 'FIK' dané tržby:
+* Po úspěšném zpracování se zobrazí jednoduchá účtenka dané tržby s hodnotou FIK:
    
-`$ groovy eetlite_run.groovy`         
-`23:50:23.100 [main] INFO  EetRunner - ==> run`  
-`23:50:23.195 [main] INFO  EetRunner - eetlite ver 0.0.1`  
-`FIK: 377e3c98-3528-449e-b71c-01726be0f8a9-ff`  
-`23:50:24.025 [main] INFO  EetRunner - <== run fik 377e3c98-3528-449e-b71c-01726be0f8a9-ff`  
+`$ groovy eetlite_run.groovy`
+                      
+`eetlite 0.0.2 uctenka`  
+`(https://github.com/novakmi/eetlite)`  
+`====================================`  
+`celk_trzba: 7896.00`  
+`dat_trzby: 2016-07-14T18:45:15+02:00`  
+`dic_popl: CZ1212121218`  
+`id_pokl: Q-126-R`  
+`id_provoz: 123`  
+`porad_cis: 0/6460/ZQ42`  
+`rezim: 0`  
+`FIK: 22d2e664-191a-494e-9810-16df1e480a27-ff`  
    
 ## Použité knihovny a nástroje
 
@@ -85,7 +97,7 @@ Aplikaci lze používat z příkazové řádky.
 
 Změnou následujícího řádku v souboru `logback.groovy`:
 
-`root(INFO, ["STDOUT"])   // change log level here to TRACE, DEBUG, INFO, WARN`
+`root(WARN, ["STDOUT"])   // change log level here to TRACE, DEBUG, INFO, WARN`
     
 lze měnit úroveň logování na konzoli 
 

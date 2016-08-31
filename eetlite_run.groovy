@@ -14,8 +14,7 @@ import wslite.soap.SOAPResponse
 
 @Slf4j
 class EetRunner { // class is used for Slf4j annotation
-    def version = "0.0.1"
-
+    def version = "0.0.2"
 
     // ****** UPRAVIT PARAMETRY *****
 
@@ -88,6 +87,14 @@ class EetRunner { // class is used for Slf4j annotation
         //TODO processing error messages
         //TODO verify signed response
         def fik = EetXml.processResponse(respText)
+        println "eetlite ${version} uctenka"
+        println "(https://github.com/novakmi/eetlite)"
+        println "===================================="
+        for (i in EetXml.data_fields.keySet()) {
+            if (config[i]) {
+                println "${i}: ${config[i]}"
+            }
+        }
         println "FIK: ${fik}"
 
         log.info "<== run fik {}", fik
