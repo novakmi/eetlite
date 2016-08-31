@@ -121,11 +121,11 @@ class EetUtil {
         return ret
     }
 
-    static def makePkp(trzba, config) {
+    static def makePkp(config) {
         log.trace "==> makePkp"
 
         def ret
-        def pkpPlain = "$trzba.dic_popl|$trzba.id_provoz|$trzba.id_pokl|$trzba.porad_cis|$trzba.dat_trzby|$trzba.celk_trzba"
+        def pkpPlain = "$config.dic_popl|$config.id_provoz|$config.id_pokl|$config.porad_cis|$config.dat_trzby|$config.celk_trzba"
         log.trace "pkpPlain {}", pkpPlain
 
         log.trace "config.cert_popl {}", config.cert_popl

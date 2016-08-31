@@ -13,6 +13,31 @@ import javax.xml.transform.stream.StreamSource
 @Slf4j
 class EetXml {
 
+    // should be in alphabetic order - canonicalization
+    // 1 .. mandatory, 0 .. optional
+    static data_fields = ["celk_trzba"      : 1,
+                          "cerp_zuct"       : 0,
+                          "cest_sluz"       : 0,
+                          "dan1"            : 0,
+                          "dan2"            : 0,
+                          "dan3"            : 0,
+                          "dat_trzby"       : 1,
+                          "dic_popl"        : 1,
+                          "dic_poverujiciho": 0,
+                          "id_pokl"         : 1,
+                          "id_provoz"       : 1,
+                          "porad_cis"       : 1,
+                          "pouzit_zboz1"    : 0,
+                          "pouzit_zboz2"    : 0,
+                          "pouzit_zboz3"    : 0,
+                          "rezim"           : 1,
+                          "urceno_cerp_zuct": 0,
+                          "zakl_dan1"       : 0,
+                          "zakl_dan2"       : 0,
+                          "zakl_dan3"       : 0,
+                          "zakl_nepodl_dph" : 0,
+    ]
+
     static String indentXml(def xml, def indent = 4) {
         log.trace "==> indentXml {} indent", xml, indent
 
@@ -122,14 +147,27 @@ class EetXml {
 
     }
 
-    static makeBody(trzba, config, id, date) {
+    static makeBody(config, id, date) {
         log.debug "==> makeBody id={}", id
 
         def uuid = UUID.randomUUID()
-        def dataMap = [celk_trzba: trzba.celk_trzba, dat_trzby: trzba.dat_trzby, dic_popl: trzba.dic_popl,
-                       id_pokl   : trzba.id_pokl, id_provoz: trzba.id_provoz, porad_cis: trzba.porad_cis, rezim: trzba.rezim]
+        def dataMap = [:]
+        for (i in data_fields.keySet()) {
+            if (config[i]) {
+                dataMap[i] = config[i]
+            } else {
+                if (data_fields[i]) {
+                    log.error "Missing field ${i}!"
+                    // TODO error
+                } else {
+                    log.debug "Skipping optional field ${i}"
+                }
+            }
+        }
 
-        def pkpValText = EetUtil.makePkp(trzba, config)
+
+        log.debug("dataMap ${dataMap}")
+        def pkpValText = EetUtil.makePkp(config)
         def pkpVal = EetUtil.toBase64(pkpValText)
         def bkpVal = EetUtil.makeBkp(pkpValText)
 
@@ -151,14 +189,23 @@ class EetXml {
         return retVal
     }
 
-    static makeMsg(trzba, config, uniques) {
+    static makeMsg(config) {
         log.debug "==> makeMsg"
+
+        def uniques = [
+                bodyId     : "BodyId+${EetUtil.getUnique()}",
+                tokenId    : "TokenId+${EetUtil.getUnique()}",
+                signatureId: "SigId+${EetUtil.getUnique()}",
+                keyId      : "KeyId+${EetUtil.getUnique()}",
+                referenceId: "RefId+${EetUtil.getUnique()}",
+        ]
+
         def id = "${uniques.bodyId}"
         def builder = new StreamingMarkupBuilder()
         builder.useDoubleQuotes = true
         builder.expandEmptyElements = true
 
-        def final bodyClosure = makeBody(trzba, config, id, EetUtil.getDateUtc())
+        def final bodyClosure = makeBody(config, id, EetUtil.getDateUtc())
         def body = builder.bind {
             out << bodyClosure
         }

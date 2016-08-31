@@ -16,50 +16,65 @@ import wslite.soap.SOAPResponse
 class EetRunner { // class is used for Slf4j annotation
     def version = "0.0.1"
 
+
+    // ****** UPRAVIT PARAMETRY *****
+
+    //viz http://www.etrzby.cz/cs/technicka-specifikace
+
+    // ------ VE VETSINE PRIPADU STACI UPRAVIT POUZE TUTO CAST -----
     def trzba_var = [
-            porad_cis : "0/6460/ZQ42",
-            dat_trzby : "2016-07-14T18:45:15+02:00",
-            celk_trzba: "7896.00",
-            rezim     : "0",
-            // TODO optional parts
+            porad_cis : "0/6460/ZQ42",               // poradove cislo uctenky (1-20 znaku)
+            dat_trzby : "2016-07-14T18:45:15+02:00", // datum a cas prijeti trzby dle ISO 8601, rrrr-mm-ddThh:mm:ss±hh:mm (±hh je ±01 pro zimni cas, ±02 pro letni cas)
+            celk_trzba: "7896.00",                   // celkova castka trzby
+            // nepovinne polozky (odstranit //)
+//            zakl_nepodl_dph : "0.00",                 // celkova castka plneni osvobozenych od DPH, ostatnich plneni
+//            zakl_dan1 : "0.00",                       // celkovy zaklad dane se zakladni sazbou DPH
+//            dan1: "0.00",                             // celkova DPH se zakladni sazbou
+//            zakl_dan2 : "0.00",                       // celkovy zaklad dane s prvni snizenou sazbou DPH
+//            dan2: "0.00",                             // celkova DPH s prvni snizenou sazbou
+//            zakl_dan3 : "0.00",                       // celkovy zaklad dane s druhou snizenou sazbou DPH
+//            dan3: "0.00",                             // celkova DPH s druhou snizenou sazbou
+//            cest_sluz : "0.00",                       // celková castka v rezimu DPH pro cestovni sluzbu
+//            pouzit_zboz1 : "0.00",                    // celková castka v rezimu DPH pro prodej pouziteho zbozi se zakladni sazbou
+//            pouzit_zboz2 : "0.00",                    // celková castka v rezimu DPH pro prodej pouziteho zbozi s prvni snizenou sazbou
+//            pouzit_zboz3 : "0.00",                    // celková castka v rezimu DPH pro prodej pouziteho zbozi s druhou snizenou sazbou
+//            urceno_cerp_zuct: "0.00",                  // celková castka plateb urcena k naslednemu cerpani nebo zuctovani
+//            cerp_zuct: "0.00",                        // celková castka plateb, ktere jsou naslednym cerpanim nebo zuctovanim platby
     ]
+    // ------
 
+    // Nasledujici casti se upravi jednou, v ostatnich pripadech jsou jiz vetsinou stejne
     def trzba_fix = [
-            dic_popl : "CZ1212121218",
-            id_provoz: "123",
-            id_pokl  : "Q-126-R",
-            rezim    : "0",
+            dic_popl : "CZ1212121218",           // DIC poplatnika, ktery odesiladatovou zpravu
+            id_provoz: "123",                    // oznaceni provozovny (1. az 5. cif. cislo)
+            id_pokl  : "Q-126-R",                // oznaceni pokladniho zarizeni (1-20 znaku)
+            rezim    : "0",                      // 0 .. bezny rezim, 1 .. zjednoduseny rezim
+            // nepovinne polozky (odstranit //)
+//            dic_poverujiciho : "CZ1212121218",  // DIC poverujiciho poplatnika (nepovinne)
     ]
 
-    def config_var = [
-            overeni      : "0",
-            prvni_zaslani: "1",
+    def hlavicka = [
+            overeni      : "0",   //0 .. ostry mod, 1 ... overovaci mod
+            prvni_zaslani: "1",   //1 .. prvni zaslani trzby, 0 .. opakovane zaslani trzby
     ]
 
     def config_fix = [
-            cert_popl: "cert/01000003.p12",
-            cert_pass: "eet",
-            url: "https://pg.eet.cz:443/eet/services/EETServiceSOAP/v2"
+            cert_popl: "cert/01000003.p12",               // cesta na certificat poplatnika (relativni k adresari eetlite)
+            cert_pass: "eet",                             // heslo cetrifikatu (zatim text, pozdeji bude zasifrovano)
+            url: "https://pg.eet.cz:443/eet/services/EETServiceSOAP/v2" // url EET (zatim testovaci prostredi)
     ]
+    // ***********
 
-    def trzba = trzba_var + trzba_fix
-    def config = config_var + config_fix
+    def config = hlavicka + trzba_var + trzba_fix + config_fix
 
     def run() {
         log.info "==> run"
         log.info "eetlite ver {}", version
 
-        // TODO validate trzba
-        // TODO validate config
+        // TODO validate config (mandatory prams, regex patterns)
 
-        def uniques = [
-                bodyId: "BodyId+${EetUtil.getUnique()}",
-                tokenId: "TokenId+${EetUtil.getUnique()}",
-                signatureId: "SigId+${EetUtil.getUnique()}",
-                keyId: "KeyId+${EetUtil.getUnique()}",
-                referenceId: "RefId+${EetUtil.getUnique()}",
-        ]
-        def message = EetXml.makeMsg(trzba, config, uniques)
+        def message = EetXml.makeMsg(config)
+        //TODO validate message against schema
 
         def toSend = message.toString()
         log.debug "toSend: {}", toSend
@@ -71,6 +86,7 @@ class EetRunner { // class is used for Slf4j annotation
         log.debug "indented response: {}",  EetXml.indentXml(respText)
 
         //TODO processing error messages
+        //TODO verify signed response
         def fik = EetXml.processResponse(respText)
         println "FIK: ${fik}"
 
