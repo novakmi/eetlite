@@ -14,7 +14,7 @@ import wslite.soap.SOAPResponse
 
 @Slf4j
 class EetRunner { // class is used for Slf4j annotation
-    def version = "0.0.2"
+    def version = "0.0.3"
 
     // ****** UPRAVIT PARAMETRY *****
 
@@ -60,7 +60,7 @@ class EetRunner { // class is used for Slf4j annotation
     def config_fix = [
             cert_popl: "cert/01000003.p12",               // cesta na certificat poplatnika (relativni k adresari eetlite)
             cert_pass: "eet",                             // heslo cetrifikatu (zatim text, pozdeji bude zasifrovano)
-            url: "https://pg.eet.cz:443/eet/services/EETServiceSOAP/v2" // url EET (zatim testovaci prostredi)
+            url: "https://pg.eet.cz:443/eet/services/EETServiceSOAP/v3" // url EET (zatim testovaci prostredi)
     ]
     // ***********
 

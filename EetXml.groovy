@@ -174,7 +174,7 @@ class EetXml {
         def retVal = {
             "soap:Body"("xmlns:soap": "http://schemas.xmlsoap.org/soap/envelope/", "xmlns:wsu": "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd",
                     "wsu:Id": "${id}", "xml:id": "${id}") {
-                Trzba(xmlns: "http://fs.mfcr.cz/eet/schema/v2") {
+                Trzba(xmlns: "http://fs.mfcr.cz/eet/schema/v3") {
                     Hlavicka(dat_odesl: date, overeni: config.overeni, prvni_zaslani: config.prvni_zaslani, uuid_zpravy: uuid)
                     Data(dataMap)
                     KontrolniKody {

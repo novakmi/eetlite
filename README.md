@@ -23,6 +23,9 @@ Viz soubor `LICENSE`
 
 ## Changelog
 
+* 2016-10-13 version `0.0.3`
+  * upraveno pro testovací prostředí v3 (URL, namespace)    
+
 * 2016-08-31 version `0.0.2`
   * přidána podpora volitelných parametrů
   * přidán popis parametrů pro editaci v souboru `./eetlite_run.groovy`  
