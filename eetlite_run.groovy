@@ -1,4 +1,5 @@
 #!/usr/bin/env groovy
+
 /* (c) Michal Novák, it.novakmi@gmail.com, see LICENSE file */
 
 @Grapes([
@@ -6,15 +7,17 @@
         @Grab(group = 'ch.qos.logback', module = 'logback-classic', version = '1.1.7'),
         @Grab('com.github.groovy-wslite:groovy-wslite:1.1.2'),
         @Grab("org.apache.santuario:xmlsec:1.5.6"),
+        @Grab("com.github.novakmi:libeetlite:0.1.0"),
 ])
 
 import groovy.util.logging.Slf4j
 import wslite.soap.SOAPClient
 import wslite.soap.SOAPResponse
+import com.github.novakmi.libeetlite.test.EetXml
 
 @Slf4j
 class EetRunner { // class is used for Slf4j annotation
-    def version = "0.0.3"
+    def version = "0.1.0"
 
     // ****** UPRAVIT PARAMETRY *****
 

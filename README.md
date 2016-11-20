@@ -23,6 +23,9 @@ Viz soubor `LICENSE`
 
 ## Changelog
 
+* 2016-11-xx version `0.1.0`
+  * použití knihovny `libeetlite`    
+  
 * 2016-10-13 version `0.0.3`
   * upraveno pro testovací prostředí v3 (URL, namespace)    
 
@@ -93,6 +96,7 @@ Aplikaci lze používat z příkazové řádky.
 * groovy-wslite  https://github.com/jwagenleitner/groovy-wslite
 * slf4j http://www.slf4j.org/
 * http://logback.qos.ch/
+* libeetlite - https://github.com/novakmi/libeetlite
 
 (_viz případné jednotlivé licence_)   
    
@@ -103,6 +107,18 @@ Změnou následujícího řádku v souboru `logback.groovy`:
 `root(WARN, ["STDOUT"])   // change log level here to TRACE, DEBUG, INFO, WARN`
     
 lze měnit úroveň logování na konzoli 
+
+V případě, že je třeba nutno provádět ladění (úpravu kódu) na úrovni knihovny `libeetlite`,
+lze doporučit následující postup:
+
+* odstranit @Grab řádek  `@Grab("com.github.novakmi:libeetlite:0.1.0"),`, který imporutje knihovnu
+* provést `clone` knihovny `libeetlite` pomocí `git clone https://github.com/novakmi/libeetlite`
+* spustit s `classpatch` ukazující na zdrojové soubory `libeetlite` příkazem
+```
+groovy -cp <adresář s libeetlite>/libeetlite/src/main/groovy/ eetlite_run.groovy
+```
+* nyní lze provádět změny ve zdrojových souborech `libeetlite`, které se projeví v dalším běhu (v `groovy` není třeba nic překládat)
+
 
 ## Kontakt
 
