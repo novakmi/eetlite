@@ -7,7 +7,7 @@
         @Grab(group = 'ch.qos.logback', module = 'logback-classic', version = '1.1.7'),
         @Grab('com.github.groovy-wslite:groovy-wslite:1.1.2'),
         @Grab("org.apache.santuario:xmlsec:1.5.6"),
-        @Grab("com.github.novakmi:libeetlite:0.1.0"),
+        @Grab("com.github.novakmi:libeetlite:0.2.0"),
 ])
 
 import groovy.util.logging.Slf4j
@@ -26,7 +26,7 @@ class EetRunner { // class is used for Slf4j annotation
     // ------ VE VETSINE PRIPADU STACI UPRAVIT POUZE TUTO CAST -----
     def trzba_var = [
             porad_cis : "0/6460/ZQ42",               // poradove cislo uctenky (1-20 znaku)
-            dat_trzby : "2016-07-14T18:45:15+02:00", // datum a cas prijeti trzby dle ISO 8601, rrrr-mm-ddThh:mm:ss±hh:mm (±hh je ±01 pro zimni cas, ±02 pro letni cas)
+            dat_trzby : "2016-11-20T18:45:15+02:00", // datum a cas prijeti trzby dle ISO 8601, rrrr-mm-ddThh:mm:ss±hh:mm (±hh je ±01 pro zimni cas, ±02 pro letni cas)
             celk_trzba: "7896.00",                   // celkova castka trzby
             // nepovinne polozky (odstranit //)
 //            zakl_nepodl_dph : "0.00",                 // celkova castka plneni osvobozenych od DPH, ostatnich plneni
@@ -78,7 +78,8 @@ class EetRunner { // class is used for Slf4j annotation
         def message = EetXml.makeMsg(config)
         //TODO validate message against schema
 
-        def toSend = message.toString()
+        def toSend = message.xml.toString()
+        log.debug "bkp: {}", message.bkp
         log.debug "toSend: {}", toSend
         SOAPClient client = new SOAPClient(config.url)
         SOAPResponse response = client.send(toSend)
@@ -93,12 +94,13 @@ class EetRunner { // class is used for Slf4j annotation
         println "eetlite ${version} uctenka"
         println "(https://github.com/novakmi/eetlite)"
         println "===================================="
-        for (i in EetXml.data_fields.keySet()) {
+        for (i in EetXml.dataFields.keySet()) {
             if (config[i]) {
                 println "${i}: ${config[i]}"
             }
         }
         println "FIK: ${fik}"
+        println "BKP: ${message.bkp}"
 
         log.info "<== run fik {}", fik
     }

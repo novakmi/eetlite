@@ -50,7 +50,6 @@ Viz soubor `LICENSE`
 
 ### Výhled
 
-* zabalení a publikování jako knihovnu (jar) v Maven repository (např. na https://bintray.com/)
 * jednoduchá okenní nástavba
 * jednoduchá aplikace pokladna pro PC s možností PDF účtenky
 
@@ -63,7 +62,7 @@ Aplikace je k dispozici  ve formě zdrojových skriptů. Ty je třeba rozbalit d
 
 Aplikaci lze používat z příkazové řádky.
 
-* Nejprve se přesvědčte, že máte správně neinstalovanou podporu groovy (příkaz `groovy --version`):
+* Nejprve se přesvědčte, že máte správně neinstalovanou podporu Groovy (příkaz `groovy --version`):
 
 `$ groovy --version`  
 `Groovy Version: 2.4.0 JVM: 1.8.0_101 Vendor: Oracle Corporation OS: Linux`
@@ -73,21 +72,24 @@ Aplikaci lze používat z příkazové řádky.
   příkazem `./eetlite_run.groovy` (Linux). Aplikaci je třeba spustit z adresáře, ve kterém jsou všechny její soubory.
   Při úplně prvním spuštění je třeba vyčkat, než Groovy stáhne potřebné 'dependence' (většinou do adresáře 
   `.groovy` v domovském adresáři).
-* Po úspěšném zpracování se zobrazí jednoduchá účtenka dané tržby s hodnotou FIK:
+* Po úspěšném zpracování se zobrazí jednoduchá účtenka dané tržby s hodnotou `FIK` a `BKP`:
    
 `$ groovy eetlite_run.groovy`
-                      
-`eetlite 0.0.2 uctenka`  
-`(https://github.com/novakmi/eetlite)`  
-`====================================`  
-`celk_trzba: 7896.00`  
-`dat_trzby: 2016-07-14T18:45:15+02:00`  
-`dic_popl: CZ1212121218`  
-`id_pokl: Q-126-R`  
-`id_provoz: 123`  
-`porad_cis: 0/6460/ZQ42`  
-`rezim: 0`  
-`FIK: 22d2e664-191a-494e-9810-16df1e480a27-ff`  
+
+```
+eetlite 0.1.0 uctenka
+(https://github.com/novakmi/eetlite)
+====================================
+celk_trzba: 7896.00
+dat_trzby: 2016-11-20T18:45:15+02:00
+dic_popl: CZ1212121218
+id_pokl: Q-126-R
+id_provoz: 123
+porad_cis: 0/6460/ZQ42
+rezim: 0
+FIK: d56b95b3-c3ac-4c47-b6fc-f05b29c2ad62-ff
+BKP: 902BBDC4-F1560BFC-2E945F6B-783DA7D4-C9C658BC
+```                      
    
 ## Použité knihovny a nástroje
 
@@ -113,10 +115,9 @@ lze doporučit následující postup:
 
 * odstranit @Grab řádek  `@Grab("com.github.novakmi:libeetlite:0.1.0"),`, který imporutje knihovnu
 * provést `clone` knihovny `libeetlite` pomocí `git clone https://github.com/novakmi/libeetlite`
-* spustit s `classpatch` ukazující na zdrojové soubory `libeetlite` příkazem
-```
-groovy -cp <adresář s libeetlite>/libeetlite/src/main/groovy/ eetlite_run.groovy
-```
+    * spustit s `classpatch` ukazující na zdrojové soubory `libeetlite` příkazem `groovy -cp <adresář s libeetlite>/libeetlite/src/main/groovy/ eetlite_run.groovy`
+    * (nebo) nakopírovat obsah adresáře  `<adresář s libeetlite>/libeetlite/src/main/groovy` do adresáře se souborem `eetlite_run.groovy`
+
 * nyní lze provádět změny ve zdrojových souborech `libeetlite`, které se projeví v dalším běhu (v `groovy` není třeba nic překládat)
 
 
