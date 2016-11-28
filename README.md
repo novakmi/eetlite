@@ -90,6 +90,12 @@ rezim: 0
 FIK: d56b95b3-c3ac-4c47-b6fc-f05b29c2ad62-ff
 BKP: 902BBDC4-F1560BFC-2E945F6B-783DA7D4-C9C658BC
 ```                      
+
+## Použití
+ 
+Od verze `0.1.0` je celá aplikace provozována jako jediný soubor (skript). Ze souboru `eetlite_run.groovy` lze vytvářet
+kopie a mít tak například vlastní soubor pro každou platbu. Zároveň si lze takto připravit celou sadu nejčastěji 
+používaných šablon.    
    
 ## Použité knihovny a nástroje
 
