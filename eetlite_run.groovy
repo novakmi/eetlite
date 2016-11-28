@@ -50,7 +50,7 @@ class EetRunner { // class is used for Slf4j annotation
             dic_popl : "CZ1212121218",           // DIC poplatnika, ktery odesiladatovou zpravu
             id_provoz: "123",                    // oznaceni provozovny (1. az 5. cif. cislo)
             id_pokl  : "Q-126-R",                // oznaceni pokladniho zarizeni (1-20 znaku)
-            rezim    : "0",                      // 0 .. bezny rezim, 1 .. zjednoduseny rezim
+            rezim    : "0",                      // 0 .. bezny rezim (s Internetem), 1 .. zjednoduseny rezim (bez Internetu)
             // nepovinne polozky (odstranit //)
 //            dic_poverujiciho : "CZ1212121218",  // DIC poverujiciho poplatnika (nepovinne)
     ]
@@ -63,7 +63,8 @@ class EetRunner { // class is used for Slf4j annotation
     def config_fix = [
             cert_popl: "cert/01000003.p12",               // cesta na certificat poplatnika (relativni k adresari eetlite)
             cert_pass: "eet",                             // heslo cetrifikatu (zatim text, pozdeji bude zasifrovano)
-            url: "https://pg.eet.cz:443/eet/services/EETServiceSOAP/v3" // url EET (zatim testovaci prostredi)
+            url: "https://pg.eet.cz:443/eet/services/EETServiceSOAP/v3", // url EET (testovaci prostredi)
+            //url: "https://prod.eet.cz:443/eet/services/EETServiceSOAP/v3", // url EET (produkcni prostredi)
     ]
     // ***********
 
@@ -101,6 +102,7 @@ class EetRunner { // class is used for Slf4j annotation
         }
         println "FIK: ${fik}"
         println "BKP: ${message.bkp}"
+        println "REZIM: ${config.rezim}"
 
         log.info "<== run fik {}", fik
     }
