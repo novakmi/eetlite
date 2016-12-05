@@ -61,7 +61,7 @@ class EetRunner { // class is used for Slf4j annotation
     ]
 
     def config_fix = [
-            cert_popl: "cert/01000003.p12",               // cesta na certificat poplatnika (relativni k adresari eetlite)
+            cert_popl: "cert/EET_CA1_Playground-CZ00000019.p12",               // cesta na certificat poplatnika (relativni k adresari eetlite)
             cert_pass: "eet",                             // heslo cetrifikatu (zatim text, pozdeji bude zasifrovano)
             url: "https://pg.eet.cz:443/eet/services/EETServiceSOAP/v3", // url EET (testovaci prostredi)
             //url: "https://prod.eet.cz:443/eet/services/EETServiceSOAP/v3", // url EET (produkcni prostredi)
