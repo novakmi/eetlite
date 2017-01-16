@@ -23,7 +23,10 @@ Viz soubor `LICENSE`
 
 ## Changelog
 
-* 2016-11-xx version `0.1.0`
+* 2017-11-21 version `0.2.0`
+  * použití knihovny `libeetlite`    
+  
+* 2016-11-21 version `0.1.0`
   * použití knihovny `libeetlite`    
   
 * 2016-10-13 version `0.0.3`

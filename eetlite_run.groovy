@@ -1,11 +1,10 @@
 #!/usr/bin/env groovy
-
-/* (c) Michal Novák, it.novakmi@gmail.com, see LICENSE file */
-
+import com.github.novakmi.libeetlite.test.EetXml
+import groovy.time.TimeCategory
 @Grapes([
         @GrabConfig(systemClassLoader = true), //logback config can be read, thanks to https://gist.github.com/grimrose/3759266
-        @Grab(group = 'ch.qos.logback', module = 'logback-classic', version = '1.1.7'),
-        @Grab('com.github.groovy-wslite:groovy-wslite:1.1.2'),
+        @Grab(group = 'ch.qos.logback', module = 'logback-classic', version = '1.1.8'),
+        @Grab('com.github.groovy-wslite:groovy-wslite:1.1.3'),
         @Grab("org.apache.santuario:xmlsec:1.5.6"),
         @Grab("com.github.novakmi:libeetlite:0.2.0"),
 ])
@@ -13,16 +12,18 @@
 import groovy.util.logging.Slf4j
 import wslite.soap.SOAPClient
 import wslite.soap.SOAPResponse
-import com.github.novakmi.libeetlite.test.EetXml
+
+/* (c) Michal Novák, it.novakmi@gmail.com, see LICENSE file */
 
 @Slf4j
 class EetRunner { // class is used for Slf4j annotation
-    def version = "0.1.0"
+    def version = "0.2.0"
+    def scriptName = getClass().protectionDomain.codeSource.location.path
 
     // ****** UPRAVIT PARAMETRY *****
 
     //viz http://www.etrzby.cz/cs/technicka-specifikace
-
+    def printToFile = 1  //0 .. uctenka jen na obrazovku, 1 .. uctenka i do souboru <jmeno>_rezim_<datum>_eetlite.txt
     // ------ VE VETSINE PRIPADU STACI UPRAVIT POUZE TUTO CAST -----
     def trzba_var = [
             porad_cis : "0/6460/ZQ42",               // poradove cislo uctenky (1-20 znaku)
@@ -47,10 +48,10 @@ class EetRunner { // class is used for Slf4j annotation
 
     // Nasledujici casti se upravi jednou, v ostatnich pripadech jsou jiz vetsinou stejne
     def trzba_fix = [
+            rezim    : "0",                      // 0 .. bezny rezim (s Internetem), 1 .. zjednoduseny rezim (bez Internetu)
             dic_popl : "CZ1212121218",           // DIC poplatnika, ktery odesiladatovou zpravu
             id_provoz: "123",                    // oznaceni provozovny (1. az 5. cif. cislo)
             id_pokl  : "Q-126-R",                // oznaceni pokladniho zarizeni (1-20 znaku)
-            rezim    : "0",                      // 0 .. bezny rezim (s Internetem), 1 .. zjednoduseny rezim (bez Internetu)
             // nepovinne polozky (odstranit //)
 //            dic_poverujiciho : "CZ1212121218",  // DIC poverujiciho poplatnika (nepovinne)
     ]
@@ -63,12 +64,33 @@ class EetRunner { // class is used for Slf4j annotation
     def config_fix = [
             cert_popl: "cert/EET_CA1_Playground-CZ00000019.p12",               // cesta na certificat poplatnika (relativni k adresari eetlite)
             cert_pass: "eet",                             // heslo cetrifikatu (zatim text, pozdeji bude zasifrovano)
-            url: "https://pg.eet.cz:443/eet/services/EETServiceSOAP/v3", // url EET (testovaci prostredi)
+            url      : "https://pg.eet.cz:443/eet/services/EETServiceSOAP/v3", // url EET (testovaci prostredi)
             //url: "https://prod.eet.cz:443/eet/services/EETServiceSOAP/v3", // url EET (produkcni prostredi)
     ]
     // ***********
 
     def config = hlavicka + trzba_var + trzba_fix + config_fix
+
+    def getReceipt(message, fik, rezim, duration) {
+        log.debug "==> getReceipt"
+        def nl = System.getProperty("line.separator");
+        def ret = "eetlite ${version} uctenka" + nl
+        ret += "(https://github.com/novakmi/eetlite)" + nl
+        ret += "====================================" + nl
+        for (i in EetXml.dataFields.keySet()) {
+            if (config[i]) {
+                ret += "${i}: ${config[i]}" + nl
+            }
+        }
+        if (!rezim) {
+            ret += "FIK: ${fik}" + nl
+        }
+        ret += "BKP: ${message.bkp}" + nl
+        ret += "REZIM: ${!rezim ? "bezny (s Internetem)" : "zjednoduseny (bez Internetu)"}" + nl
+        ret += "CAS ZPRACOVANI: ${duration}ms"
+        log.debug "<== getReceipt ret=${ret}"
+        return ret
+    }
 
     def run() {
         log.info "==> run"
@@ -76,33 +98,38 @@ class EetRunner { // class is used for Slf4j annotation
 
         // TODO validate config (mandatory prams, regex patterns)
 
+        def timeIn = new Date();
         def message = EetXml.makeMsg(config)
         //TODO validate message against schema
 
         def toSend = message.xml.toString()
         log.debug "bkp: {}", message.bkp
         log.debug "toSend: {}", toSend
-        SOAPClient client = new SOAPClient(config.url)
-        SOAPResponse response = client.send(toSend)
+        def rezim = config.rezim != "0"
 
-        log.trace "response {}", response
-        def respText = response.text
-        log.debug "indented response: {}",  EetXml.indentXml(respText)
+        def fik = ""
+        if (!rezim) { // ostry rezim - Internet
+            SOAPClient client = new SOAPClient(config.url)
+            SOAPResponse response = client.send(toSend)
 
-        //TODO processing error messages
-        //TODO verify signed response
-        def fik = EetXml.processResponse(respText)
-        println "eetlite ${version} uctenka"
-        println "(https://github.com/novakmi/eetlite)"
-        println "===================================="
-        for (i in EetXml.dataFields.keySet()) {
-            if (config[i]) {
-                println "${i}: ${config[i]}"
-            }
+            log.trace "response {}", response
+            def respText = response.text
+            log.debug "indented response: {}", EetXml.indentXml(respText)
+
+            //TODO processing error messages
+            //TODO verify signed response
+            fik = EetXml.processResponse(respText)
+        } else {
+            log.debug("Message not send, 'zjednoduseny rezim' ${config.rezim}")
         }
-        println "FIK: ${fik}"
-        println "BKP: ${message.bkp}"
-        println "REZIM: ${config.rezim}"
+        def duration = new Date(new Date().getTime() - timeIn.getTime()).getTime()
+        def receipt = getReceipt(message, fik, rezim, duration)
+        println receipt
+        if (printToFile) {
+            def fileName = scriptName.replace(".groovy",
+                    "_${!rezim ? "ostry" : "zjednoduseny"}_${new Date().format("yyyy_MM_dd_hh_mm_ss")}_eetlite.txt")
+            new File(fileName).write(receipt)
+        }
 
         log.info "<== run fik {}", fik
     }
