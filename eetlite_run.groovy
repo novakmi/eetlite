@@ -1,6 +1,5 @@
 #!/usr/bin/env groovy
 import com.github.novakmi.libeetlite.test.EetXml
-import groovy.time.TimeCategory
 @Grapes([
         @GrabConfig(systemClassLoader = true), //logback config can be read, thanks to https://gist.github.com/grimrose/3759266
         @Grab(group = 'ch.qos.logback', module = 'logback-classic', version = '1.1.8'),
@@ -13,7 +12,7 @@ import groovy.util.logging.Slf4j
 import wslite.soap.SOAPClient
 import wslite.soap.SOAPResponse
 
-/* (c) Michal Novák, it.novakmi@gmail.com, see LICENSE file */
+/* (c) 2016 - 2017 Michal Novák, it.novakmi@gmail.com, see LICENSE file */
 
 @Slf4j
 class EetRunner { // class is used for Slf4j annotation
@@ -21,15 +20,14 @@ class EetRunner { // class is used for Slf4j annotation
     def scriptName = getClass().protectionDomain.codeSource.location.path
 
     // ****** UPRAVIT PARAMETRY *****
-
     //viz http://www.etrzby.cz/cs/technicka-specifikace
-    def printToFile = 1  //0 .. uctenka jen na obrazovku, 1 .. uctenka i do souboru <jmeno>_rezim_<datum>_eetlite.txt
     // ------ VE VETSINE PRIPADU STACI UPRAVIT POUZE TUTO CAST -----
+    def printToFile = 1  //0 .. uctenka jen na obrazovku, 1 .. uctenka i do souboru <jmeno>_rezim_<datum>_eetlite.txt
     def trzba_var = [
             porad_cis : "0/6460/ZQ42",               // poradove cislo uctenky (1-20 znaku)
-            dat_trzby : "2016-11-20T18:45:15+02:00", // datum a cas prijeti trzby dle ISO 8601, rrrr-mm-ddThh:mm:ss±hh:mm (±hh je ±01 pro zimni cas, ±02 pro letni cas)
+            dat_trzby : "2017-01-17T18:45:15+01:00", // datum a cas prijeti trzby dle ISO 8601, rrrr-mm-ddThh:mm:ss±hh:mm (±hh je ±01 pro zimni cas, ±02 pro letni cas)
             celk_trzba: "7896.00",                   // celkova castka trzby
-            // nepovinne polozky (odstranit //)
+            /* nepovinne polozky (odstranit //)*/
 //            zakl_nepodl_dph : "0.00",                 // celkova castka plneni osvobozenych od DPH, ostatnich plneni
 //            zakl_dan1 : "0.00",                       // celkovy zaklad dane se zakladni sazbou DPH
 //            dan1: "0.00",                             // celkova DPH se zakladni sazbou
@@ -49,11 +47,11 @@ class EetRunner { // class is used for Slf4j annotation
     // Nasledujici casti se upravi jednou, v ostatnich pripadech jsou jiz vetsinou stejne
     def trzba_fix = [
             rezim    : "0",                      // 0 .. bezny rezim (s Internetem), 1 .. zjednoduseny rezim (bez Internetu)
-            dic_popl : "CZ1212121218",           // DIC poplatnika, ktery odesiladatovou zpravu
+            dic_popl : "CZ00000019",             // DIC poplatnika, ktery odesila datovou zpravu (mel by se schodovat s certifikatem nize)
             id_provoz: "123",                    // oznaceni provozovny (1. az 5. cif. cislo)
             id_pokl  : "Q-126-R",                // oznaceni pokladniho zarizeni (1-20 znaku)
-            // nepovinne polozky (odstranit //)
-//            dic_poverujiciho : "CZ1212121218",  // DIC poverujiciho poplatnika (nepovinne)
+            /* nepovinne polozky (odstranit //)*/
+//           dic_poverujiciho : "CZ1212121218",  // DIC poverujiciho poplatnika (nepovinne)
     ]
 
     def hlavicka = [
@@ -62,20 +60,24 @@ class EetRunner { // class is used for Slf4j annotation
     ]
 
     def config_fix = [
-            cert_popl: "cert/EET_CA1_Playground-CZ00000019.p12",               // cesta na certificat poplatnika (relativni k adresari eetlite)
+            cert_popl: "cert/EET_CA1_Playground-CZ00000019.p12",  // cesta na certificat poplatnika (relativni k adresari eetlite)
             cert_pass: "eet",                             // heslo cetrifikatu (zatim text, pozdeji bude zasifrovano)
             url      : "https://pg.eet.cz:443/eet/services/EETServiceSOAP/v3", // url EET (testovaci prostredi)
             //url: "https://prod.eet.cz:443/eet/services/EETServiceSOAP/v3", // url EET (produkcni prostredi)
     ]
-    // ***********
+    // ****** KONEC PRO UPRAVU PARAMETRU *****
 
     def config = hlavicka + trzba_var + trzba_fix + config_fix
 
-    def getReceipt(message, fik, rezim, duration) {
+    def getReceipt(message, fileName, fik, rezim, duration) {
         log.debug "==> getReceipt"
         def nl = System.getProperty("line.separator");
         def ret = "eetlite ${version} uctenka" + nl
         ret += "(https://github.com/novakmi/eetlite)" + nl
+        if (printToFile) {
+            def file = new File(fileName).getPath()
+            ret += "Soubor: ${file}" + nl
+        }
         ret += "====================================" + nl
         for (i in EetXml.dataFields.keySet()) {
             if (config[i]) {
@@ -123,11 +125,11 @@ class EetRunner { // class is used for Slf4j annotation
             log.debug("Message not send, 'zjednoduseny rezim' ${config.rezim}")
         }
         def duration = new Date(new Date().getTime() - timeIn.getTime()).getTime()
-        def receipt = getReceipt(message, fik, rezim, duration)
+        def fileName = scriptName.replace(".groovy",
+                "_${!rezim ? "ostry" : "zjednoduseny"}_${new Date().format("yyyy_MM_dd_hh_mm_ss")}_eetlite.txt")
+        def receipt = getReceipt(message, fileName, fik, rezim, duration)
         println receipt
         if (printToFile) {
-            def fileName = scriptName.replace(".groovy",
-                    "_${!rezim ? "ostry" : "zjednoduseny"}_${new Date().format("yyyy_MM_dd_hh_mm_ss")}_eetlite.txt")
             new File(fileName).write(receipt)
         }
 
