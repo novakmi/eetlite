@@ -25,7 +25,7 @@ class EetRunner { // class is used for Slf4j annotation
     def printToFile = 1  //0 .. uctenka jen na obrazovku, 1 .. uctenka i do souboru <jmeno>_rezim_<datum>_eetlite.txt
     def trzba_var = [
             porad_cis : "0/6460/ZQ42",               // poradove cislo uctenky (1-20 znaku)
-            dat_trzby : "2017-01-17T18:45:15+01:00", // datum a cas prijeti trzby dle ISO 8601, rrrr-mm-ddThh:mm:ss±hh:mm (±hh je ±01 pro zimni cas, ±02 pro letni cas)
+            dat_trzby : "2017-01-21T18:45:15+01:00", // datum a cas prijeti trzby dle ISO 8601, rrrr-mm-ddThh:mm:ss±hh:mm (±hh je ±01 pro zimni cas, ±02 pro letni cas)
             celk_trzba: "7896.00",                   // celkova castka trzby
             /* nepovinne polozky (odstranit //)*/
 //            zakl_nepodl_dph : "0.00",                 // celkova castka plneni osvobozenych od DPH, ostatnich plneni
@@ -73,6 +73,7 @@ class EetRunner { // class is used for Slf4j annotation
         log.debug "==> getReceipt"
         def nl = System.getProperty("line.separator");
         def ret = "eetlite ${version} uctenka" + nl
+        ret += "https://sites.google.com/view/eetlite" + nl
         ret += "(https://github.com/novakmi/eetlite)" + nl
         if (printToFile) {
             def file = new File(fileName).getPath()

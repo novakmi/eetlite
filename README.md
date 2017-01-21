@@ -17,10 +17,14 @@ odeslat dodatečně v ostrém režimu.
 Používání může vyžadovat určité znalosti příkazové řádky. Doporučuje se vše nejdříve vyzkoušet oproti 
 testovacímu prostředí EET (výchozí nastavení). 
 
-Stránky projektu:  
+Stránky projektu (popis instalace a použití):  
+
+https://sites.google.com/view/eetlite
+
+Zdrojové kódy:
  
 https://github.com/novakmi/eetlite  
-https://gitlab.com/novakmi/eetlite
+https://gitlab.com/novakmi/eetlite  
 
 ## Licence
 
@@ -73,20 +77,26 @@ Viz soubor `LICENSE`
 
 ## Instalace
 
-K provozu je nutná instalace jazyka/prostředí Groovy - http://groovy-lang.org/install.html.
+K provozu je nutná Java (Java SE JDK http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+a instalace jazyka/prostředí Groovy - http://groovy-lang.org/download.html.
+Pro MS Window spoužijte Windows installer (stačí zvolit pouze `Groovy binaries` a `Modify variables`). 
+V prostředí Linux bývá instalace součástí systémů balíčků (např. `apt-get install groovy`). 
+V jiných případech postupujte dle návodu http://groovy-lang.org/install.html.
+
 Aplikace je k dispozici  ve formě zdrojových skriptů. Ty je třeba rozbalit do libovolného adresáře.
 
 ## Spuštění
 
-Aplikaci lze používat z příkazové řádky.
+Aplikaci lze používat z příkazové řádky nebo spuštěním scriptu (2x kliknout myší).
 
 * Nejprve se přesvědčte, že máte správně neinstalovanou podporu Groovy (příkaz `groovy --version`):
 
 `$ groovy --version`  
 `Groovy Version: 2.4.0 JVM: 1.8.0_101 Vendor: Oracle Corporation OS: Linux`
            
-* Upravte parametry tržby a případné konfigurace (cestu na soubor s klíčem, heslo a další volby) v souboru `eetlite_run.groovy`.
-  Pro úpravu lze použít jakýkoliv editor, doporučuje se použít editor s podporou syntaxe `groovy` (např. `notepad++`)
+* Upravte parametry tržby a konfigurace (cestu na soubor s klíčem, heslo a další volby) v souboru `eetlite_run.groovy`. 
+  Pro úpravu lze použít jakýkoliv editor, doporučuje se použít editor s podporou 
+  syntaxe `groovy` a Linux formátu  (popř. `JEdit`, `notepad++`)
 * Spusťte aplikaci přikazem `groovy eetlite_run.groovy` (Windows, Linux, Mac) popřípadě 
   příkazem `./eetlite_run.groovy` (Linux). Aplikaci je třeba spustit z adresáře, ve kterém jsou všechny její soubory.
   Při úplně prvním spuštění je třeba vyčkat, než Groovy stáhne potřebné 'dependence' (většinou do adresáře 
@@ -98,20 +108,21 @@ Aplikaci lze používat z příkazové řádky.
 
 ```
 eetlite 0.2.0 uctenka
+https://sites.google.com/view/eetlite
 (https://github.com/novakmi/eetlite)
-Soubor: /eetlite_run_ostry_2017_01_17_10_31_00_eetlite.txt
+Soubor: /eetlite_run_ostry_2017_01_21_11_06_42_eetlite.txt
 ====================================
 celk_trzba: 7896.00
-dat_trzby: 2017-01-17T18:45:15+01:00
+dat_trzby: 2017-01-21T18:45:15+01:00
 dic_popl: CZ00000019
 id_pokl: Q-126-R
 id_provoz: 123
 porad_cis: 0/6460/ZQ42
 rezim: 0
-FIK: 225882ca-6cb4-4a06-8722-8c03e5ae54b9-ff
-BKP: E33ABBF3-FF18F4EB-AACB71CF-7FAB2EC7-1E221A6B
+FIK: e91ca135-9f13-4eb1-8a2b-4bc759e33c9f-ff
+BKP: FAD6D023-E92678FE-410EE310-51580CA5-5697BDAA
 REZIM: bezny (s Internetem)
-CAS ZPRACOVANI: 992ms
+CAS ZPRACOVANI: 988ms
 ```                      
 
 ## Použití
@@ -119,7 +130,7 @@ CAS ZPRACOVANI: 992ms
 Od verze `0.1.0` je celá aplikace provozována jako jediný soubor (skript). Ze souboru `eetlite_run.groovy` lze vytvářet
 kopie a mít tak například vlastní soubor pro každou platbu. Zároveň si lze takto připravit celou sadu nejčastěji 
 používaných šablon. Pokud budete kopírovat soubor do jiného adresáře, překopírujete i soubor `logback.groovy` a 
-popřípadě adresář `cert` (nebo změnte cestu jeho umístění ve skriptu).
+popřípadě adresář `cert` (nebo změňte cestu jeho umístění ve skriptu).
 
 **POZNÁMKA:** V základním tvaru tato aplikace komunikuje s testovacím prostředím EET, pro používání v produkčním 
               prostředí je potřeba přepnout `url:` a   `cert_popl:`
@@ -157,6 +168,10 @@ lze doporučit následující postup:
 
 ## Kontakt
 
+Stránky projektu:
+
+https://sites.google.com/view/eetlite
+
 K hlášení chyb, podávání podnětů na zlepšení lze použít:  
 
 https://github.com/novakmi/eetlite/issues  
@@ -166,7 +181,5 @@ e-mail: it.novakmi@gmail.com
 
 ## Podobné projekty a odkazy
 
-http://www.etrzby.cz/cs/technicka-specifikace  
-
 https://github.com/l-ra/openeet    
-https://github.com/todvora/eet-client  
+https://github.com/todvora/eet-client
