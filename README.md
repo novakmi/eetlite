@@ -40,7 +40,7 @@ Viz soubor `LICENSE`
 
 ## Changelog
 
-* 2017-01-18 version `0.2.0`
+* 2017-01-22 version `0.2.0`
   * tisk účtenky do souboru
   * aktualizace dokumentace
   * aktualizace verzí závislých knihoven (dependence)
