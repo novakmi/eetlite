@@ -40,6 +40,9 @@ Viz soubor `LICENSE`
 
 ## Changelog
 
+* 2017-02-20 version `0.3.0`
+  * ve zjednodušeném režimu se tiskne PKP 
+   
 * 2017-01-22 version `0.2.0`
   * tisk účtenky do souboru
   * aktualizace dokumentace

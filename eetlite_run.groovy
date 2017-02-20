@@ -5,7 +5,7 @@ import com.github.novakmi.libeetlite.test.EetXml
         @Grab(group = 'ch.qos.logback', module = 'logback-classic', version = '1.1.8'),
         @Grab('com.github.groovy-wslite:groovy-wslite:1.1.3'),
         @Grab("org.apache.santuario:xmlsec:1.5.6"),
-        @Grab("com.github.novakmi:libeetlite:0.2.0"),
+        @Grab("com.github.novakmi:libeetlite:0.3.0"),
 ])
 
 import groovy.util.logging.Slf4j
@@ -16,7 +16,7 @@ import wslite.soap.SOAPResponse
 
 @Slf4j
 class EetRunner { // class is used for Slf4j annotation
-    def version = "0.2.0"
+    def version = "0.3.0"
     def scriptName = getClass().protectionDomain.codeSource.location.path
 
     // ****** UPRAVIT PARAMETRY *****
@@ -85,10 +85,13 @@ class EetRunner { // class is used for Slf4j annotation
                 ret += "${i}: ${config[i]}" + nl
             }
         }
+
+        ret += "BKP: ${message.bkp}" + nl
         if (!rezim) {
             ret += "FIK: ${fik}" + nl
+        } else {
+            ret += "PKP: ${message.pkp}" + nl
         }
-        ret += "BKP: ${message.bkp}" + nl
         ret += "REZIM: ${!rezim ? "bezny (s Internetem)" : "zjednoduseny (bez Internetu)"}" + nl
         ret += "CAS ZPRACOVANI: ${duration}ms"
         log.debug "<== getReceipt ret=${ret}"
