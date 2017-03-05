@@ -1,22 +1,22 @@
 #!/usr/bin/env groovy
-import com.github.novakmi.libeetlite.test.EetXml
+/* (c) 2016 - 2017 Michal Novák, it.novakmi@gmail.com, see LICENSE file */
+
 @Grapes([
         @GrabConfig(systemClassLoader = true), //logback config can be read, thanks to https://gist.github.com/grimrose/3759266
         @Grab(group = 'ch.qos.logback', module = 'logback-classic', version = '1.1.8'),
-        @Grab('com.github.groovy-wslite:groovy-wslite:1.1.3'),
-        @Grab("org.apache.santuario:xmlsec:1.5.6"),
-        @Grab("com.github.novakmi:libeetlite:0.3.0"),
+        @Grab('com.github.groovy-wslite:groovy-wslite:1.1.3'), 
+        //@Grab("com.github.novakmi:libeetlite:0.3.0"),
 ])
 
 import groovy.util.logging.Slf4j
 import wslite.soap.SOAPClient
 import wslite.soap.SOAPResponse
-
-/* (c) 2016 - 2017 Michal Novák, it.novakmi@gmail.com, see LICENSE file */
+import com.github.novakmi.libeetlite.EetUtil
+import com.github.novakmi.libeetlite.EetXml
 
 @Slf4j
 class EetRunner { // class is used for Slf4j annotation
-    def version = "0.3.0"
+    def version = "0.4.0"
     def scriptName = getClass().protectionDomain.codeSource.location.path
 
     // ****** UPRAVIT PARAMETRY *****
@@ -25,7 +25,8 @@ class EetRunner { // class is used for Slf4j annotation
     def printToFile = 1  //0 .. uctenka jen na obrazovku, 1 .. uctenka i do souboru <jmeno>_rezim_<datum>_eetlite.txt
     def trzba_var = [
             porad_cis : "0/6460/ZQ42",               // poradove cislo uctenky (1-20 znaku)
-            dat_trzby : "2017-01-21T18:45:15+01:00", // datum a cas prijeti trzby dle ISO 8601, rrrr-mm-ddThh:mm:ss±hh:mm (±hh je ±01 pro zimni cas, ±02 pro letni cas)
+            dat_trzby :  EetUtil.nowToIso(),         //"2017-03-05T18:45:15+01:00", // datum a cas prijeti trzby dle ISO 8601, rrrr-mm-ddThh:mm:ss±hh:mm (±hh je ±01 pro zimni cas, ±02 pro letni cas)
+                                                     //  EetUtil.nowToIso() ... pro aktualni cas dle ISO 8601
             celk_trzba: "7896.00",                   // celkova castka trzby
             /* nepovinne polozky (odstranit //)*/
 //            zakl_nepodl_dph : "0.00",                 // celkova castka plneni osvobozenych od DPH, ostatnich plneni
@@ -60,7 +61,7 @@ class EetRunner { // class is used for Slf4j annotation
     ]
 
     def config_fix = [
-            cert_popl: "cert/EET_CA1_Playground-CZ00000019.p12",  // cesta na certificat poplatnika (relativni k adresari eetlite)
+            cert_popl: new FileInputStream("cert/EET_CA1_Playground-CZ00000019.p12"),  // stream na certificat poplatnika (cesta FileInputStream je relativni k adresari eetlite)
             cert_pass: "eet",                             // heslo cetrifikatu (zatim text, pozdeji bude zasifrovano)
             url      : "https://pg.eet.cz:443/eet/services/EETServiceSOAP/v3", // url EET (testovaci prostredi)
             //url: "https://prod.eet.cz:443/eet/services/EETServiceSOAP/v3", // url EET (produkcni prostredi)
@@ -106,6 +107,7 @@ class EetRunner { // class is used for Slf4j annotation
 
         def timeIn = new Date();
         def message = EetXml.makeMsg(config)
+        config.cert_popl.close() // close file input stream
         //TODO validate message against schema
 
         def toSend = message.xml.toString()
@@ -124,7 +126,8 @@ class EetRunner { // class is used for Slf4j annotation
 
             //TODO processing error messages
             //TODO verify signed response
-            fik = EetXml.processResponse(respText)
+            def processed =  EetXml.processResponse(respText)
+            fik = processed.fik
         } else {
             log.debug("Message not send, 'zjednoduseny rezim' ${config.rezim}")
         }

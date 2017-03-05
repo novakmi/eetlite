@@ -40,6 +40,11 @@ Viz soubor `LICENSE`
 
 ## Changelog
 
+* 2017-03-06 TODO version `0.4.0`
+  * libeetlite ver 0.4.0  
+  * certikát poplatníka je nyní předáván jako stream 
+    (je třeba použít `new FileInputStream(path)` a stream uzavřít po zavolání `EetXml.makeMsg`)
+
 * 2017-02-20 version `0.3.0`
   * ve zjednodušeném režimu se tiskne PKP 
    
