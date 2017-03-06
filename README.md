@@ -40,8 +40,9 @@ Viz soubor `LICENSE`
 
 ## Changelog
 
-* 2017-03-06 TODO version `0.4.0`
-  * libeetlite ver 0.4.0  
+* 2017-03-06 version `0.4.0`
+  * libeetlite ver 0.4.0
+  * datum tržby je implicitně roven aktuálnímu času (lze změnit)   
   * certikát poplatníka je nyní předáván jako stream 
     (je třeba použít `new FileInputStream(path)` a stream uzavřít po zavolání `EetXml.makeMsg`)
 
