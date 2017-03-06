@@ -40,6 +40,9 @@ Viz soubor `LICENSE`
 
 ## Changelog
 
+* 2017-03-06 version `0.4.1`
+  * libeetlite ver 0.4.1
+
 * 2017-03-06 version `0.4.0`
   * libeetlite ver 0.4.0
   * datum tržby je implicitně roven aktuálnímu času (lze změnit)   

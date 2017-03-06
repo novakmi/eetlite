@@ -5,7 +5,7 @@
         @GrabConfig(systemClassLoader = true), //logback config can be read, thanks to https://gist.github.com/grimrose/3759266
         @Grab(group = 'ch.qos.logback', module = 'logback-classic', version = '1.1.8'),
         @Grab('com.github.groovy-wslite:groovy-wslite:1.1.3'), 
-        @Grab("com.github.novakmi:libeetlite:0.4.0"),
+        @Grab("com.github.novakmi:libeetlite:0.4.1"),
 ])
 
 import groovy.util.logging.Slf4j
@@ -16,7 +16,7 @@ import com.github.novakmi.libeetlite.EetXml
 
 @Slf4j
 class EetRunner { // class is used for Slf4j annotation
-    def version = "0.4.0"
+    def version = "0.4.1"
     def scriptName = getClass().protectionDomain.codeSource.location.path
 
     // ****** UPRAVIT PARAMETRY *****
