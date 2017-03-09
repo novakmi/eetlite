@@ -1,32 +1,32 @@
 #!/usr/bin/env groovy
-/* (c) 2016 - 2017 Michal Novák, it.novakmi@gmail.com, see LICENSE file */
-
+import com.github.novakmi.libeetlite.EetUtil
+import com.github.novakmi.libeetlite.EetXml
 @Grapes([
         @GrabConfig(systemClassLoader = true), //logback config can be read, thanks to https://gist.github.com/grimrose/3759266
         @Grab(group = 'ch.qos.logback', module = 'logback-classic', version = '1.1.8'),
-        @Grab('com.github.groovy-wslite:groovy-wslite:1.1.3'), 
+        @Grab('com.github.groovy-wslite:groovy-wslite:1.1.3'),
         @Grab("com.github.novakmi:libeetlite:0.4.1"),
 ])
 
 import groovy.util.logging.Slf4j
+
+/* (c) 2016 - 2017 Michal Novák, it.novakmi@gmail.com, see LICENSE file */
 import wslite.soap.SOAPClient
 import wslite.soap.SOAPResponse
-import com.github.novakmi.libeetlite.EetUtil
-import com.github.novakmi.libeetlite.EetXml
 
 @Slf4j
 class EetRunner { // class is used for Slf4j annotation
-    def version = "0.4.1"
+    def version = "0.4.2"
     def scriptName = getClass().protectionDomain.codeSource.location.path
 
     // ****** UPRAVIT PARAMETRY *****
     //viz http://www.etrzby.cz/cs/technicka-specifikace
     // ------ VE VETSINE PRIPADU STACI UPRAVIT POUZE TUTO CAST -----
-    def printToFile = 1  //0 .. uctenka jen na obrazovku, 1 .. uctenka i do souboru <jmeno>_rezim_<datum>_eetlite.txt
+    def printToFile = 1  //0 .. uctenka jen na obrazovku, 1 .. uctenka i do souboru <jmeno>_rezim_<datum>_PC<porad_cis>_eetlite.txt
     def trzba_var = [
             porad_cis : "0/6460/ZQ42",               // poradove cislo uctenky (1-20 znaku)
-            dat_trzby :  EetUtil.nowToIso(),         //"2017-03-05T18:45:15+01:00", // datum a cas prijeti trzby dle ISO 8601, rrrr-mm-ddThh:mm:ss±hh:mm (±hh je ±01 pro zimni cas, ±02 pro letni cas)
-                                                     //  EetUtil.nowToIso() ... pro aktualni cas dle ISO 8601
+            dat_trzby : EetUtil.nowToIso(),         //"2017-03-05T18:45:15+01:00", // datum a cas prijeti trzby dle ISO 8601, rrrr-mm-ddThh:mm:ss±hh:mm (±hh je +01 pro zimni cas, +02 pro letni cas)
+            //  EetUtil.nowToIso() ... pro aktualni cas dle ISO 8601
             celk_trzba: "7896.00",                   // celkova castka trzby
             /* nepovinne polozky (odstranit //)*/
 //            zakl_nepodl_dph : "0.00",                 // celkova castka plneni osvobozenych od DPH, ostatnich plneni
@@ -99,22 +99,30 @@ class EetRunner { // class is used for Slf4j annotation
         return ret
     }
 
-    def run() {
-        log.info "==> run"
-        log.info "eetlite ver {}", version
+    def fileWithSubStringExists(dirName, fileSubString) {
+        log.debug "==> fileWithSubStringExists"
+        def retVal
+        def dir = new File(dirName)
+        def filter = new FilenameFilter() {
+            boolean accept(File path, String filename) {
+                return filename.contains(fileSubString as String)
+            }
+        }
+        def files = dir.listFiles(filter)
+        retVal = files.size() > 0
+        log.debug "<== fileWithSubStringExists retVal={}", retVal
+        return retVal
+    }
 
-        // TODO validate config (mandatory prams, regex patterns)
-
-        def timeIn = new Date();
-        def message = EetXml.makeMsg(config)
+    def processEet(config, message, fileName) {
+        log.info "==> processEet"
+        def timeIn = new Date()
+        def rezim = config.rezim != "0"
         config.cert_popl.close() // close file input stream
-        //TODO validate message against schema
 
         def toSend = message.xml.toString()
         log.debug "bkp: {}", message.bkp
         log.debug "toSend: {}", toSend
-        def rezim = config.rezim != "0"
-
         def fik = ""
         if (!rezim) { // ostry rezim - Internet
             SOAPClient client = new SOAPClient(config.url)
@@ -126,21 +134,54 @@ class EetRunner { // class is used for Slf4j annotation
 
             //TODO processing error messages
             //TODO verify signed response
-            def processed =  EetXml.processResponse(respText)
+            def processed = EetXml.processResponse(respText)
             fik = processed.fik
         } else {
             log.debug("Message not send, 'zjednoduseny rezim' ${config.rezim}")
         }
         def duration = new Date(new Date().getTime() - timeIn.getTime()).getTime()
-        def fileName = scriptName.replace(".groovy",
-                "_${!rezim ? "ostry" : "zjednoduseny"}_${new Date().format("yyyy_MM_dd_hh_mm_ss")}_eetlite.txt")
         def receipt = getReceipt(message, fileName, fik, rezim, duration)
         println receipt
         if (printToFile) {
             new File(fileName).write(receipt)
         }
+        log.debug "fik {}", fik
+        log.info "<== processEet"
+    }
 
-        log.info "<== run fik {}", fik
+    def isValid(config, message, fileSubString) {
+        log.info "==> isValid"
+        def retVal = true
+        //TODO validate message against schema
+        // TODO validate config (mandatory prams, regex patterns)
+
+        if (retVal && printToFile) {
+            if (fileWithSubStringExists(".", fileSubString)) {
+                println "========================================================================="
+                println "Uctenka s cislem ${config.porad_cis} jiz existuje, opravte pořadové číslo"
+                println "nebo přesuňte/odstraňte soubor obsahující ${fileSubString}"
+                println "========================================================================="
+                retVal = false
+            }
+        }
+
+        log.info "<== isValid retVal={}", retVal
+        return retVal
+    }
+
+    def run() {
+        log.info "==> run"
+        log.info "eetlite ver {}", version
+        def orderInFileName = "PC${config.porad_cis.replaceAll(File.separator, "_")}"
+        def rezim = config.rezim != "0"
+        def fileName = scriptName.replace(".groovy",
+                "_${!rezim ? "ostry" : "zjednoduseny"}_${new Date().format("yyyy_MM_dd_hh_mm_ss")}_${orderInFileName}_eetlite.txt")
+        def message = EetXml.makeMsg(config)
+        if (isValid(config, message, orderInFileName)) {
+            processEet(config, message, fileName)
+        } else {
+            println "Parametry neprošly validací, EET tržba se neposlala!"
+        }
     }
 }
 
