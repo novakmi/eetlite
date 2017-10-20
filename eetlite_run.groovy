@@ -28,7 +28,7 @@ class EetRunner { // class is used for Slf4j annotation
             dat_trzby : EetUtil.nowToIso(),         //"2017-03-05T18:45:15+01:00", // datum a cas prijeti trzby dle ISO 8601, rrrr-mm-ddThh:mm:ss±hh:mm (±hh je +01 pro zimni cas, +02 pro letni cas)
             //  EetUtil.nowToIso() ... pro aktualni cas dle ISO 8601
             celk_trzba: "7896.00",                   // celkova castka trzby
-            /* nepovinne polozky (odstranit //)*/
+            /* nepovinne polozky (odstranit komentar //)*/
 //            zakl_nepodl_dph : "0.00",                 // celkova castka plneni osvobozenych od DPH, ostatnich plneni
 //            zakl_dan1 : "0.00",                       // celkovy zaklad dane se zakladni sazbou DPH
 //            dan1: "0.00",                             // celkova DPH se zakladni sazbou
