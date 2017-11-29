@@ -40,6 +40,9 @@ Viz soubor `LICENSE`
 
 ## Changelog
 
+* 2017-03-09 version `0.5.0`
+  *  libeetlite ver 0.5.0
+
 * 2017-03-09 version `0.4.2`
   * pokud existuje v akt. adresáři soubor s nastaveným pořadovým číslem, tržba se nezpracuje
 

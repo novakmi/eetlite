@@ -5,7 +5,7 @@ import com.github.novakmi.libeetlite.EetXml
         @GrabConfig(systemClassLoader = true), //logback config can be read, thanks to https://gist.github.com/grimrose/3759266
         @Grab(group = 'ch.qos.logback', module = 'logback-classic', version = '1.1.8'),
         @Grab('com.github.groovy-wslite:groovy-wslite:1.1.3'),
-        @Grab("com.github.novakmi:libeetlite:0.4.1"),
+        @Grab("com.github.novakmi:libeetlite:0.5.0"),
 ])
 
 import groovy.util.logging.Slf4j
@@ -16,7 +16,7 @@ import wslite.soap.SOAPResponse
 
 @Slf4j
 class EetRunner { // class is used for Slf4j annotation
-    def version = "0.4.2"
+    def version = "0.5.0"
     def scriptName = getClass().protectionDomain.codeSource.location.path
 
     // ****** UPRAVIT PARAMETRY *****
@@ -117,7 +117,7 @@ class EetRunner { // class is used for Slf4j annotation
     def processEet(config, message, fileName) {
         log.info "==> processEet"
         def timeIn = new Date()
-        def rezim = config.rezim != "0"
+        def rezim = EetUtil.isZjednodusenyRezim(config)
         config.cert_popl.close() // close file input stream
 
         def toSend = message.xml.toString()
