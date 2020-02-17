@@ -10,13 +10,13 @@ import com.github.novakmi.libeetlite.EetXml
 
 import groovy.util.logging.Slf4j
 
-/* (c) 2016 - 2017 Michal Novák, it.novakmi@gmail.com, see LICENSE file */
+/* (c) 2016 - 2020 Michal Novák, it.novakmi@gmail.com, see LICENSE file */
 import wslite.soap.SOAPClient
 import wslite.soap.SOAPResponse
 
 @Slf4j
 class EetRunner { // class is used for Slf4j annotation
-    def version = "0.5.0"
+    def version = "0.6.0"
     def scriptName = getClass().protectionDomain.codeSource.location.path
 
     // ****** UPRAVIT PARAMETRY *****
