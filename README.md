@@ -40,6 +40,11 @@ Viz soubor `LICENSE`
 
 ## Changelog
 
+* 2020-02-17 version `0.6.0`
+  * libeetlite ver 0.5.1, logback 1.2.3
+  * aktualizace certifkátů testovacího prostředí
+  * aktualizace README a LICENSE
+  
 * 2017-03-09 version `0.5.0`
   *  libeetlite ver 0.5.0
 
