@@ -40,6 +40,11 @@ Viz soubor `LICENSE`
 
 ## Changelog
 
+* 2020-03-03 version `0.7.0`
+  * libeetlite ver 0.6.0
+  * otestovano s Oracle JDK 8, OpenJDK 11, OpenJDK 13, OpenJDK 14  
+  * aktualizace README a LICENSE
+
 * 2020-02-17 version `0.6.0`
   * libeetlite ver 0.5.1, logback 1.2.3
   * aktualizace certifkátů testovacího prostředí

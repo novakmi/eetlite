@@ -5,7 +5,7 @@ import com.github.novakmi.libeetlite.EetXml
         @GrabConfig(systemClassLoader = true), //logback config can be read, thanks to https://gist.github.com/grimrose/3759266
         @Grab(group = 'ch.qos.logback', module = 'logback-classic', version = '1.2.3'),
         @Grab('com.github.groovy-wslite:groovy-wslite:1.1.3'),
-        @Grab("com.github.novakmi:libeetlite:0.5.1"),
+        @Grab("com.github.novakmi:libeetlite:0.6.0"),
 ])
 
 import groovy.util.logging.Slf4j
@@ -16,7 +16,7 @@ import wslite.soap.SOAPResponse
 
 @Slf4j
 class EetRunner { // class is used for Slf4j annotation
-    def version = "0.6.0"
+    def version = "0.7.0"
     def scriptName = getClass().protectionDomain.codeSource.location.path
 
     // ****** UPRAVIT PARAMETRY *****
@@ -27,7 +27,7 @@ class EetRunner { // class is used for Slf4j annotation
             porad_cis : "0/6460/ZQ42",               // poradove cislo uctenky (1-20 znaku)
             dat_trzby : EetUtil.nowToIso(),         //"2017-03-05T18:45:15+01:00", // datum a cas prijeti trzby dle ISO 8601, rrrr-mm-ddThh:mm:ss±hh:mm (±hh je +01 pro zimni cas, +02 pro letni cas)
             //  EetUtil.nowToIso() ... pro aktualni cas dle ISO 8601
-            celk_trzba: "7896.00",                   // celkova castka trzby
+            celk_trzba: "7897.00",                   // celkova castka trzby
             /* nepovinne polozky (odstranit komentar //)*/
 //            zakl_nepodl_dph : "0.00",                 // celkova castka plneni osvobozenych od DPH, ostatnich plneni
 //            zakl_dan1 : "0.00",                       // celkovy zaklad dane se zakladni sazbou DPH
@@ -172,6 +172,7 @@ class EetRunner { // class is used for Slf4j annotation
     def run() {
         log.info "==> run"
         log.info "eetlite ver {}", version
+        println "eetlite script Groovy: ${GroovySystem.version} JVM: ${System.getProperty("java.specification.version")}"
         def orderInFileName = "PC${config.porad_cis.replaceAll(File.separator, "_")}"
         def rezim = config.rezim != "0"
         def fileName = scriptName.replace(".groovy",
