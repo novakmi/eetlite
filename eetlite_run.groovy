@@ -5,7 +5,7 @@ import com.github.novakmi.libeetlite.EetXml
         @GrabConfig(systemClassLoader = true), //logback config can be read, thanks to https://gist.github.com/grimrose/3759266
         @Grab(group = 'ch.qos.logback', module = 'logback-classic', version = '1.2.3'),
         @Grab('com.github.groovy-wslite:groovy-wslite:1.1.3'),
-        @Grab("com.github.novakmi:libeetlite:0.6.0"),
+        @Grab("com.github.novakmi:libeetlite:0.7.0"),
 ])
 
 import groovy.util.logging.Slf4j
