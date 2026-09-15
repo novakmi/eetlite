@@ -1,0 +1,33 @@
+image:
+  name: groovy:5.1.1-jdk21
+  entrypoint: [""]
+  kubernetes:
+    user: "0"
+  docker:
+    user: "root"
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+    - when: never
+
+run-script:
+  stage: test
+  before_script:
+    - apt-get update
+    - apt-get install --yes git
+    - git init libeetlite
+    - git -C libeetlite remote add origin https://github.com/novakmi/libeetlite.git
+    - if git -C libeetlite ls-remote --exit-code --heads origin "$CI_COMMIT_REF_NAME" >/dev/null 2>&1; then ref="$CI_COMMIT_REF_NAME"; else ref="main"; fi
+    - git -C libeetlite fetch --depth 1 origin "$ref"
+    - git -C libeetlite checkout --detach FETCH_HEAD
+    - java -version
+    - groovy --version
+  script:
+    - groovy -cp libeetlite/src/main/groovy eetlite_run.groovy
+  artifacts:
+    when: on_success
+    paths:
+      - eetlite_run_*_eetlite.txt

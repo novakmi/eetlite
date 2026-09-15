@@ -1,0 +1,64 @@
+name: Run EET script
+
+on:
+  push:
+  schedule:
+    - cron: "0 3 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  run-script:
+    name: Run EET 2.0 script
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Check out script
+        uses: actions/checkout@v4
+
+      - name: Check out matching libeetlite branch
+        shell: bash
+        env:
+          LIBEETLITE_REPOSITORY: https://github.com/novakmi/libeetlite.git
+          LIBEETLITE_REF: ${{ github.ref_name }}
+        run: |
+          git init libeetlite
+          git -C libeetlite remote add origin "$LIBEETLITE_REPOSITORY"
+          if git -C libeetlite ls-remote --exit-code --heads origin "$LIBEETLITE_REF" >/dev/null 2>&1; then
+            ref="$LIBEETLITE_REF"
+          else
+            ref="main"
+          fi
+          git -C libeetlite fetch --depth 1 origin "$ref"
+          git -C libeetlite checkout --detach FETCH_HEAD
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Groovy
+        uses: wtfjoke/setup-groovy@v3
+        with:
+          groovy-version: "5.1.1"
+
+      - name: Run EET 2.0 script
+        run: groovy -cp libeetlite/src/main/groovy eetlite_run.groovy
+
+      - name: Upload receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eet-receipt-${{ matrix.os }}
+          path: eetlite_run_*_eetlite.txt
+          if-no-files-found: ignore
