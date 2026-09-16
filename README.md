@@ -2,8 +2,8 @@
 
 # eetlite 
 
-[![Run EET script](https://github.com/novakmi/eetlite-script/actions/workflows/ci.yml/badge.svg)](https://github.com/novakmi/eetlite-script/actions/workflows/ci.yml)
-[![Pipeline status](https://gitlab.com/novakmi/eetlite/badges/master/pipeline.svg)](https://gitlab.com/novakmi/eetlite/-/pipelines)
+[![Run EET script](https://github.com/novakmi/eetlite/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/novakmi/eetlite/actions/workflows/ci.yml)
+[![Pipeline status](https://gitlab.com/novakmi/eetlite/badges/main/pipeline.svg)](https://gitlab.com/novakmi/eetlite/-/pipelines)
 
 Implementace "Elektronické evidence tržeb"  http://www.etrzby.cz  
 Implementation of  "Registration of sales" see  http://www.etrzby.cz
